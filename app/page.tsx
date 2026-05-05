@@ -3,7 +3,12 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 
 export default async function Home() {
-  const session = await auth();
+  let session = null;
+  try {
+    session = await auth();
+  } catch {
+    // Database unavailable — render landing page without session
+  }
 
   if (session) {
     redirect("/dashboard");
