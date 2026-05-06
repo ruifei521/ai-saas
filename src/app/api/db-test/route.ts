@@ -5,10 +5,10 @@ export const runtime = 'nodejs';
 
 export async function GET() {
   try {
-    await prisma.\\SELECT 1\;
     const users = await prisma.user.findMany({ take: 1 });
     return NextResponse.json({ ok: true, db: 'connected', users: users.length });
-  } catch (err: any) {
-    return NextResponse.json({ ok: false, error: err.message }, { status: 500 });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    return NextResponse.json({ ok: false, error: message }, { status: 500 });
   }
 }
