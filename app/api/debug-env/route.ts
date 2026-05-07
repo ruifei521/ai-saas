@@ -13,45 +13,41 @@ export async function GET() {
     const e = err instanceof Error ? err : new Error(String(err));
     results.dbTest = "FAILED";
     results.dbError = e.message;
-    results.dbStack = e.stack?.substring(0, 500);
   }
 
-  // Test 2: Check env vars that matter for auth
-  results.GITHUB_ID = process.env.GITHUB_ID ? process.env.GITHUB_ID.substring(0, 8) + "..." : "MISSING";
+  // Test 2: Auth config values (partial, safe to expose)
+  results.GITHUB_ID = process.env.GITHUB_ID ? "SET(len=" + process.env.GITHUB_ID.length + ")" : "MISSING";
   results.GITHUB_SECRET = process.env.GITHUB_SECRET ? "SET(len=" + process.env.GITHUB_SECRET.length + ")" : "MISSING";
   results.AUTH_SECRET = process.env.AUTH_SECRET ? "SET(len=" + process.env.AUTH_SECRET.length + ")" : "MISSING";
   results.DATABASE_URL = process.env.DATABASE_URL ? "SET(len=" + process.env.DATABASE_URL.length + ")" : "MISSING";
 
-  // Test 3: Try NextAuth initialization manually
+  // Test 3: Try importing and calling NextAuth directly
   try {
-    const { Auth } = await import("@auth/core");
-    const GitHub = (await import("@auth/core/providers/github")).default;
-    const { PrismaAdapter } = await import("@auth/prisma-adapter");
+    // Dynamic import to avoid TS issues
+    const authModule = await import("../../src/auth");
+    const handlers = authModule.handlers;
+    results.handlersType = typeof handlers;
 
-    const config = {
-      trustHost: true,
-      secret: process.env.AUTH_SECRET,
-      adapter: PrismaAdapter(prisma),
-      providers: [GitHub({
-        clientId: process.env.GITHUB_ID || "",
-        clientSecret: process.env.GITHUB_SECRET || "",
-      })],
-      basePath: "/api/auth",
-    };
+    // Create a Request for signin/github and call the handler
+    const req = new Request("https://ai-saas-two-neon.vercel.app/api/auth/signin/github", {
+      headers: {
+        "host": "ai-saas-two-neon.vercel.app",
+        "x-forwarded-proto": "https",
+        "x-forwarded-host": "ai-saas-two-neon.vercel.app",
+      }
+    });
 
-    // Create a mock request for signin/github
-    const request = new Request("https://ai-saas-two-neon.vercel.app/api/auth/signin/github");
-    
-    const response = await Auth(request, config as any);
-    results.authStatus = response.status;
-    results.authHeaders = Object.fromEntries(response.headers.entries());
-    const body = await response.text();
-    results.authBody = body.substring(0, 500);
+    const res = await handlers(req as any);
+    results.authResponseStatus = res.status;
+    results.authResponseHeaders = Object.fromEntries(res.headers.entries());
+    const body = await res.text();
+    results.authResponseBody = body.substring(0, 500);
   } catch (err: unknown) {
     const e = err instanceof Error ? err : new Error(String(err));
     results.authTest = "FAILED";
     results.authError = e.message;
-    results.authStack = e.stack?.substring(0, 800);
+    results.authErrorName = e.name;
+    results.authStack = e.stack?.substring(0, 1000);
   }
 
   return NextResponse.json(results);
