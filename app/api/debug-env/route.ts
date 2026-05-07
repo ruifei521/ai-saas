@@ -37,7 +37,7 @@ export async function GET() {
       }
     });
 
-    const res = await handlers(req as any);
+    const res = await (handlers as any).GET(req);
     results.authResponseStatus = res.status;
     results.authResponseHeaders = Object.fromEntries(res.headers.entries());
     const body = await res.text();
