@@ -16,7 +16,7 @@ export async function GET() {
     try {
       const u = new URL(nextauthUrl);
       urlParseResult = `OK: origin=${u.origin} href=${u.href}`;
-    } catch (e: unknown) {
+    } catch (e) {
       const err = e as Error;
       urlParseResult = `ERROR: ${err.message}`;
     }
