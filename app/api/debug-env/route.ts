@@ -24,7 +24,7 @@ export async function GET() {
   // Test 3: Try importing and calling NextAuth directly
   try {
     // Dynamic import to avoid TS issues
-    const authModule = await import("../../src/auth");
+    const authModule = await import("@/auth");
     const handlers = authModule.handlers;
     results.handlersType = typeof handlers;
 
