@@ -13,7 +13,8 @@ console.log("[auth] DATABASE_URL:", process.env.DATABASE_URL ? "SET" : "MISSING"
 export const { handlers, auth, signIn, signOut } = NextAuth({
   trustHost: true,
   secret: process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET,
-  adapter: PrismaAdapter(prisma),
+  // TEMP: Disable PrismaAdapter to isolate Configuration error
+  // adapter: PrismaAdapter(prisma),
   providers: [
     GitHubProvider({
       clientId: process.env.GITHUB_ID ?? "",
@@ -22,15 +23,21 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   ],
   debug: true,
   session: {
-    strategy: "database" as const,
+    strategy: "jwt" as const,
   },
   pages: {
     error: "/",
   },
   callbacks: {
-    async session({ session, user }) {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+      }
+      return token;
+    },
+    async session({ session, token }) {
       if (session.user) {
-        session.user.id = user.id;
+        session.user.id = token.id as string;
       }
       return session;
     },

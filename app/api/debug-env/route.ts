@@ -15,11 +15,12 @@ export async function GET() {
     results.dbError = e.message;
   }
 
-  // Test 2: Auth config values (partial, safe to expose)
-  results.GITHUB_ID = process.env.GITHUB_ID ? "SET(len=" + process.env.GITHUB_ID.length + ")" : "MISSING";
-  results.GITHUB_SECRET = process.env.GITHUB_SECRET ? "SET(len=" + process.env.GITHUB_SECRET.length + ")" : "MISSING";
-  results.AUTH_SECRET = process.env.AUTH_SECRET ? "SET(len=" + process.env.AUTH_SECRET.length + ")" : "MISSING";
-  results.DATABASE_URL = process.env.DATABASE_URL ? "SET(len=" + process.env.DATABASE_URL.length + ")" : "MISSING";
+  // Test 2: Auth config values (show prefix for verification)
+  const mask = (v: string | undefined, n = 4) => v ? `SET(len=${v.length}, starts=${v.substring(0, n)}..., ends=...${v.substring(v.length - 2)})` : "MISSING";
+  results.GITHUB_ID = mask(process.env.GITHUB_ID);
+  results.GITHUB_SECRET = mask(process.env.GITHUB_SECRET, 6);
+  results.AUTH_SECRET = mask(process.env.AUTH_SECRET);
+  results.DATABASE_URL = mask(process.env.DATABASE_URL, 12);
 
   // Test 3: Try importing and calling NextAuth directly
   try {
