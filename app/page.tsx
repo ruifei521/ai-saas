@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 
@@ -26,18 +25,18 @@ export default async function Home() {
           <a href="#pricing" className="text-sm text-zinc-600 dark:text-zinc-400 hover:text-black dark:hover:text-white">
             Pricing
           </a>
-          <Link
-            href="/api/auth/signin"
+          <a
+            href="/api/auth/signin/github"
             className="text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:text-black dark:hover:text-white"
           >
             Sign in
-          </Link>
-          <Link
-            href="/api/auth/signin"
+          </a>
+          <a
+            href="/api/auth/signin/github"
             className="rounded-full bg-black px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200"
           >
             Get Started Free
-          </Link>
+          </a>
         </div>
       </nav>
 
@@ -63,12 +62,12 @@ export default async function Home() {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Link
-            href="/api/auth/signin"
+          <a
+            href="/api/auth/signin/github"
             className="rounded-full bg-black px-8 py-4 text-base font-semibold text-white transition-colors hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200"
           >
             Start Free — 3 generations daily
-          </Link>
+          </a>
           <a
             href="#demo"
             className="rounded-full border border-zinc-200 dark:border-zinc-800 px-8 py-4 text-base font-semibold transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-900"
@@ -184,12 +183,12 @@ export default async function Home() {
                 </li>
               ))}
             </ul>
-            <Link
-              href="/api/auth/signin"
+            <a
+              href="/api/auth/signin/github"
               className="block text-center rounded-full border border-zinc-300 dark:border-zinc-700 px-6 py-3 text-sm font-medium transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-900"
             >
               Get started free
-            </Link>
+            </a>
           </div>
 
           {/* Pro */}
@@ -217,12 +216,12 @@ export default async function Home() {
                 </li>
               ))}
             </ul>
-            <Link
-              href="/api/auth/signin"
+            <a
+              href="/api/auth/signin/github"
               className="block text-center rounded-full bg-white dark:bg-black text-black dark:text-white px-6 py-3 text-sm font-medium transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-900"
             >
               Start 7-day free trial
-            </Link>
+            </a>
           </div>
         </div>
       </section>
